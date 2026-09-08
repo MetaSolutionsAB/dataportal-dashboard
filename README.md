@@ -28,27 +28,30 @@ pnpm serve                           # http://localhost:8080/
 ## Installation på server
 
 Skriptet kräver Node.js 20 eller nyare. Enklast är att låta Docker stå för
-Node: `docker-compose.yml` kör både installation och generator i
-standardimagen `node:22-alpine` från Docker Hub, med repot monterat som volym.
-Servern behöver då bara Docker.
+Node: både installation och generator körs i standardimagen `node:22-alpine`
+från Docker Hub, med repot monterat som volym. Servern behöver då bara Docker.
 
 ```bash
 git clone https://github.com/MetaSolutionsAB/dataportal-dashboard.git /opt/dataportal-dashboard
 cd /opt/dataportal-dashboard
 cp config.docker.example.json config.json    # anpassa statusUrl m.m.
-# ändra exportmonteringen (/srv/exports) i docker-compose.yml om filerna ligger någon annanstans
-docker compose run --rm install              # pnpm install i containern
-docker compose run --rm generate             # provkör, skriver public/status.json
+./docker-run.sh install                      # pnpm install i containern
+./docker-run.sh generate                     # provkör, skriver public/status.json
 ```
+
+`docker-run.sh` kräver bara Docker. Ligger exportfilerna någon annanstans än
+`/srv/exports` anges det med `EXPORTS_DIR=/annan/katalog ./docker-run.sh generate`.
+Har servern Docker Compose går det lika bra med `docker compose run --rm install`
+respektive `docker compose run --rm generate` (se `docker-compose.yml`).
 
 Sökvägar i `config.json` är sökvägar **inuti containern**: relativa sökvägar
 utgår från `/app` (repots rot) och exportfilerna nås via monteringen
 `/data/exports`. `config.docker.example.json` är anpassad för det.
 
 Extra flaggor skickas vidare till skriptet, t.ex.
-`docker compose run --rm generate --config annan.json --pretty`.
+`./docker-run.sh generate --config annan.json --pretty`.
 
-Vid uppdatering: `git pull` följt av `docker compose run --rm install`.
+Vid uppdatering: `git pull` följt av `./docker-run.sh install`.
 
 `public/` serveras av valfri webbserver på värden, t.ex. nginx med
 `root /opt/dataportal-dashboard/public;`. Filerna som containern skriver ägs
@@ -136,7 +139,7 @@ och `stopSignalRecieved: true` ger "Stoppad".
 Se `crontab.example`:
 
 ```
-15 * * * *  cd /opt/dataportal-dashboard && docker compose run --rm generate >> /var/log/dataportal-dashboard.log 2>&1
+15 * * * *  cd /opt/dataportal-dashboard && ./docker-run.sh generate >> /var/log/dataportal-dashboard.log 2>&1
 ```
 
 Skriptet skriver alltid en `status.json` (atomiskt via temporär fil) även om

@@ -2,8 +2,10 @@
 # Installera med:  crontab -e   (och anpassa sökvägar/användare)
 # Minuttalet 15 undviker att kollidera med jobb som startar på hel timme.
 
-# Med Docker (servern behöver ingen egen Node):
-15 * * * *  cd /opt/dataportal-dashboard && docker compose run --rm generate >> /var/log/dataportal-dashboard.log 2>&1
+# Med Docker (servern behöver ingen egen Node; EXPORTS_DIR om exporterna inte ligger i /srv/exports):
+15 * * * *  cd /opt/dataportal-dashboard && ./docker-run.sh generate >> /var/log/dataportal-dashboard.log 2>&1
+# Med Docker Compose installerat fungerar även:
+# 15 * * * *  cd /opt/dataportal-dashboard && docker compose run --rm generate >> /var/log/dataportal-dashboard.log 2>&1
 
 # Utan Docker (kräver Node 20+ på servern):
 # 15 * * * *  cd /opt/dataportal-dashboard && /usr/bin/node bin/generate.js --config config.json >> /var/log/dataportal-dashboard.log 2>&1
