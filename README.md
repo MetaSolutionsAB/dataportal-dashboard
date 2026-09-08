@@ -144,28 +144,28 @@ och `stopSignalRecieved: true` ger "Stoppad".
 
 ## Lösenordsskydd
 
-Dashboarden har ingen egen inloggning; skyddet läggs i webbservern som
-serverar `public/` med HTTP Basic Auth och en `.htpasswd`-fil. En färdig
-Apache-konfiguration finns i `deploy/apache.conf.example`.
+Dashboarden har ingen egen inloggning; skyddet läggs i Apache med HTTP Basic
+Auth via en `.htaccess` i `public/`. Mallen finns i `public/.htaccess.example`.
 
 1. Skapa lösenordsfilen utanför webbroten. Första användaren med `-c`,
-   ytterligare användare utan:
+   ytterligare användare utan (`htpasswd` finns i paketet `apache2-utils`):
 
    ```bash
    sudo htpasswd -c /etc/apache2/dataportal-dashboard.htpasswd anvandare
    ```
 
-   `htpasswd` finns i paketet `apache2-utils`.
-
-2. Kopiera `deploy/apache.conf.example` till
-   `/etc/apache2/sites-available/dataportal-dashboard.conf`, sätt
-   `ServerName`, TLS och sökvägen till lösenordsfilen, och aktivera:
+2. Kopiera mallen och kontrollera sökvägen till lösenordsfilen:
 
    ```bash
-   sudo a2enmod headers
-   sudo a2ensite dataportal-dashboard
-   sudo apachectl configtest && sudo systemctl reload apache2
+   cp public/.htaccess.example public/.htaccess
    ```
+
+   `public/.htaccess` är gitignorerad eftersom sökvägen är serverspecifik.
+
+3. Se till att den virtuella värden som serverar `public/` har
+   `AllowOverride AuthConfig` (eller `All`) för katalogen. Utan det ignoreras
+   filen tyst och sidan förblir öppen. Kontrollera efteråt att sidan svarar
+   401 utan inloggning, t.ex. med `curl -I https://.../`.
 
 Skyddet omfattar hela katalogen, alltså även `status.json`. Använd alltid
 TLS, annars skickas lösenordet i klartext vid varje anrop.

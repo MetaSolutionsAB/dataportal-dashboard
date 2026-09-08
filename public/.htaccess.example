@@ -1,0 +1,11 @@
+# Lösenordsskydd för dashboarden med HTTP Basic Auth.
+# Kopiera till public/.htaccess (gitignorerad) och peka AuthUserFile på
+# lösenordsfilen, som skapas utanför webbroten:
+#   sudo htpasswd -c /etc/apache2/dataportal-dashboard.htpasswd anvandare
+#
+# Kräver att den virtuella värden har "AllowOverride AuthConfig" (eller All)
+# för katalogen, annars ignoreras filen tyst och sidan förblir öppen.
+AuthType Basic
+AuthName "Dataportal driftstatus"
+AuthUserFile /etc/apache2/dataportal-dashboard.htpasswd
+Require valid-user

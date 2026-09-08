@@ -4,3 +4,4 @@ public/status.json
 config.json
 .env
 .pnpm-store/
+public/.htaccess
