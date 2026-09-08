@@ -1,0 +1,5 @@
+# Generera status.json för dataportal-dashboarden en gång i timmen.
+# Installera med:  crontab -e   (och anpassa sökvägar/användare)
+# Kör helst efter att nattens skördning och exporter är klara; minuttalet
+# 15 undviker att kollidera med jobb som startar på hel timme.
+15 * * * *  cd /opt/dataportal-dashboard && /usr/bin/node bin/generate.js --config /etc/dataportal-dashboard/config.json >> /var/log/dataportal-dashboard.log 2>&1

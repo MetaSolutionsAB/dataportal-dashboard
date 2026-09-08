@@ -1,0 +1,65 @@
+{
+  "entrystore": {
+    "baseURI": "https://admin.dataportal.se/store/",
+    "timeoutMs": 30000
+  },
+  "datasets": {
+    "rdfType": "dcat:Dataset",
+    "recentHours": 24
+  },
+  "harvest": {
+    "maxAgeHours": 26,
+    "statusUrl": "harvester-status.json",
+    "statusMaxAgeMinutes": 90,
+    "catalogs": [
+      {
+        "id": "lantmateriet",
+        "name": "Nationell Geodataportal (Lantmäteriet)",
+        "contextId": "778"
+      },
+      {
+        "id": "snd",
+        "contextId": "818"
+      },
+      {
+        "id": "skr",
+        "contextId": "677"
+      },
+      {
+        "id": "context-91",
+        "contextId": "91"
+      },
+      {
+        "id": "context-525",
+        "contextId": "525"
+      }
+    ]
+  },
+  "exports": {
+    "maxAgeHours": 26,
+    "files": [
+      {
+        "name": "all.rdf",
+        "path": "examples/exports/all.rdf",
+        "url": "https://admin.dataportal.se/all.rdf",
+        "minSizeBytes": 1024
+      },
+      {
+        "name": "nsip.rdf",
+        "path": "examples/exports/nsip.rdf",
+        "url": "https://admin.dataportal.se/nsip.rdf",
+        "minSizeBytes": 1024
+      },
+      {
+        "name": "hvd.rdf",
+        "path": "examples/exports/hvd.rdf",
+        "url": "https://admin.dataportal.se/hvd.rdf",
+        "minSizeBytes": 1024
+      }
+    ]
+  },
+  "statistics": {
+    "files": []
+  },
+  "output": "public/status.json"
+}

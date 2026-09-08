@@ -1,0 +1,21 @@
+{
+  "name": "dataportal-dashboard",
+  "version": "1.0.0",
+  "description": "Statusdashboard för Sveriges dataportal: skördning, API-siffror och exporter",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "dataportal-status": "bin/generate.js"
+  },
+  "scripts": {
+    "generate": "node bin/generate.js",
+    "generate:example": "node bin/generate.js --config config.example.json",
+    "serve": "node bin/serve.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@entryscape/entrystore-js": "^4.17.0"
+  }
+}
