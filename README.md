@@ -35,14 +35,21 @@ från Docker Hub, med repot monterat som volym. Servern behöver då bara Docker
 git clone https://github.com/MetaSolutionsAB/dataportal-dashboard.git /opt/dataportal-dashboard
 cd /opt/dataportal-dashboard
 cp config.docker.example.json config.json    # anpassa statusUrl m.m.
+cp .env.example .env                         # ange EXPORTS_DIR = katalogen med exportfilerna
 ./docker-run.sh install                      # pnpm install i containern
 ./docker-run.sh generate                     # provkör, skriver public/status.json
 ```
 
-`docker-run.sh` kräver bara Docker. Ligger exportfilerna någon annanstans än
-`/srv/exports` anges det med `EXPORTS_DIR=/annan/katalog ./docker-run.sh generate`.
-Har servern Docker Compose går det lika bra med `docker compose run --rm install`
-respektive `docker compose run --rm generate` (se `docker-compose.yml`).
+`docker-run.sh` kräver bara Docker. Har servern Docker Compose går det lika bra
+med `docker compose run --rm install` respektive `docker compose run --rm generate`.
+
+Serverspecifika värden ligger i `.env`, som är gitignorerad, så att
+`docker-compose.yml` och `docker-run.sh` kan uppdateras med `git pull` utan
+lokala ändringar. I dag finns en inställning: `EXPORTS_DIR`, katalogen på värden
+med exportfilerna. Den monteras som `/data/exports` i containern, och det är
+den sökvägen som används i `config.json`, t.ex. `/data/exports/nsip/nsip.rdf`.
+Symboliska länkar i repot till kataloger utanför det fungerar inte i
+containern, eftersom länkens mål inte finns där.
 
 Sökvägar i `config.json` är sökvägar **inuti containern**: relativa sökvägar
 utgår från `/app` (repots rot) och exportfilerna nås via monteringen

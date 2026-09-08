@@ -7,6 +7,9 @@
 # config.json ligger i repots rot (gitignorerad). Sökvägar i den är sökvägar
 # inuti containern: relativa sökvägar utgår från /app, exportfilerna nås via
 # monteringen /data/exports nedan.
+#
+# Serverspecifika värden sätts i .env (gitignorerad, se .env.example), inte här:
+#   EXPORTS_DIR  katalog på värden med exportfilerna (standard /srv/exports)
 x-node: &node
   image: node:22-alpine
   working_dir: /app
@@ -15,8 +18,8 @@ x-node: &node
     CI: "true"   # låt pnpm köra utan interaktiva frågor
   volumes:
     - .:/app
-    # Exportfilerna som ska kontrolleras (anpassa vänstra sidan till servern)
-    - /srv/exports:/data/exports:ro
+    # Exportfilerna som ska kontrolleras; katalogen på värden anges i .env
+    - ${EXPORTS_DIR:-/srv/exports}:/data/exports:ro
 
 services:
   install:

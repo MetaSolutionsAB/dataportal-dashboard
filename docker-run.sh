@@ -6,13 +6,19 @@
 #   ./docker-run.sh generate                     # skriver public/status.json
 #   ./docker-run.sh generate --config x.json     # extra flaggor skickas vidare
 #
-# Miljövariabler:
+# Miljövariabler (sätts i .env eller i miljön):
 #   EXPORTS_DIR  katalog på värden med exportfilerna (standard /srv/exports),
 #                monteras som /data/exports i containern
 #   NODE_IMAGE   image att köra i (standard node:22-alpine)
 set -eu
 
 cd "$(dirname "$0")"
+# Serverspecifika värden läses från .env (samma fil som docker compose använder)
+if [ -f .env ]; then
+  set -a
+  . ./.env
+  set +a
+fi
 EXPORTS_DIR="${EXPORTS_DIR:-/srv/exports}"
 NODE_IMAGE="${NODE_IMAGE:-node:22-alpine}"
 

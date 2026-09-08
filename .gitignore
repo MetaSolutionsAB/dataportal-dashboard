@@ -2,4 +2,5 @@ node_modules/
 public/status.json
 # public/harvester-status.json är en symlänk till exempeldata och ska vara med i repot
 config.json
+.env
 .pnpm-store/
