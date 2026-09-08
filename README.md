@@ -25,6 +25,31 @@ pnpm serve                           # http://localhost:8080/
 `pnpm generate:example` kör mot exempelkonfigurationen med testfilerna i
 `examples/` och fungerar direkt utan ändringar.
 
+## Installation på server
+
+Skriptet kräver **Node.js 20 eller nyare** (använder inbyggd `fetch` och
+`node:util.parseArgs`). Kontrollera med `node --version`; är versionen äldre
+måste Node uppdateras först, t.ex. via NodeSource eller nvm.
+
+pnpm följer inte med Node men kan aktiveras via Corepack, som gör det:
+
+```bash
+corepack enable
+corepack prepare pnpm@10.32.1 --activate
+```
+
+Saknas `corepack` fungerar `npm install -g pnpm@10` lika bra. Därefter:
+
+```bash
+git clone https://github.com/MetaSolutionsAB/dataportal-dashboard.git /opt/dataportal-dashboard
+cd /opt/dataportal-dashboard
+pnpm install --prod
+cp config.example.json /etc/dataportal-dashboard/config.json   # och anpassa
+```
+
+Cron-jobbet (se `crontab.example`) kör `node bin/generate.js` direkt och
+behöver alltså inte pnpm; pnpm används bara vid installation och uppdatering.
+
 ## Vad som samlas in
 
 | Del | Källa | Innehåll |
