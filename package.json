@@ -17,5 +17,6 @@
   },
   "dependencies": {
     "@entryscape/entrystore-js": "^4.17.0"
-  }
+  },
+  "packageManager": "pnpm@10.32.1"
 }

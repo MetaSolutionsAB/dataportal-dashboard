@@ -16,13 +16,13 @@ Lösningen består av två delar:
 ## Kom igång
 
 ```bash
-npm install
+pnpm install
 cp config.example.json config.json   # anpassa sökvägar och kataloger
-npm run generate                     # skriver public/status.json
-npm run serve                        # http://localhost:8080/
+pnpm generate                        # skriver public/status.json
+pnpm serve                           # http://localhost:8080/
 ```
 
-`npm run generate:example` kör mot exempelkonfigurationen med testfilerna i
+`pnpm generate:example` kör mot exempelkonfigurationen med testfilerna i
 `examples/` och fungerar direkt utan ändringar.
 
 ## Vad som samlas in
@@ -92,7 +92,7 @@ Ligger filen på en annan origin än dashboarden måste den servern svara med
 `Access-Control-Allow-Origin` som tillåter dashboardens origin, annars stoppar
 webbläsaren hämtningen. Relativa URL:er fungerar också; exempelkonfigurationen
 använder `harvester-status.json`, som i repot är en symbolisk länk från
-`public/` till exempelfilen i `examples/stats/` så att `npm run serve` fungerar
+`public/` till exempelfilen i `examples/stats/` så att `pnpm serve` fungerar
 utan ändringar.
 
 Ett livstecken äldre än `statusMaxAgeMinutes` ger status "Inget livstecken",
