@@ -142,6 +142,40 @@ utan ändringar.
 Ett livstecken äldre än `statusMaxAgeMinutes` ger status "Inget livstecken",
 och `stopSignalRecieved: true` ger "Stoppad".
 
+## Lösenordsskydd
+
+Dashboarden har ingen egen inloggning; skyddet läggs i webbservern som
+serverar `public/` med HTTP Basic Auth och en `.htpasswd`-fil. En färdig
+Apache-konfiguration finns i `deploy/apache.conf.example`.
+
+1. Skapa lösenordsfilen utanför webbroten. Första användaren med `-c`,
+   ytterligare användare utan:
+
+   ```bash
+   sudo htpasswd -c /etc/apache2/dataportal-dashboard.htpasswd anvandare
+   ```
+
+   `htpasswd` finns i paketet `apache2-utils`.
+
+2. Kopiera `deploy/apache.conf.example` till
+   `/etc/apache2/sites-available/dataportal-dashboard.conf`, sätt
+   `ServerName`, TLS och sökvägen till lösenordsfilen, och aktivera:
+
+   ```bash
+   sudo a2enmod headers
+   sudo a2ensite dataportal-dashboard
+   sudo apachectl configtest && sudo systemctl reload apache2
+   ```
+
+Skyddet omfattar hela katalogen, alltså även `status.json`. Använd alltid
+TLS, annars skickas lösenordet i klartext vid varje anrop.
+
+Harvesterns `status.json` hämtas av webbläsaren från `harvest.statusUrl`. Ligger
+den bakom samma skydd och på samma origin följer inloggningen med automatiskt.
+Ligger den på en annan origin skickar webbläsaren inte inloggningen dit, och
+den servern måste då antingen vara öppen för läsning eller svara med
+`Access-Control-Allow-Origin` för dashboardens origin.
+
 ## Crontab
 
 Se `crontab.example`:
