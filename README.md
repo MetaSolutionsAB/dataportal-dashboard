@@ -22,8 +22,9 @@ pnpm generate                        # skriver public/status.json
 pnpm serve                           # http://localhost:8080/
 ```
 
-`pnpm generate:example` kör mot exempelkonfigurationen med testfilerna i
-`examples/` och fungerar direkt utan ändringar.
+Sökvägarna i `config.example.json` förutsätter Docker-upplägget nedan, där
+exportfilerna monteras som `/data/exports`. Utan Docker byts de mot filernas
+riktiga sökvägar på maskinen.
 
 ## Installation på server
 
@@ -34,7 +35,7 @@ från Docker Hub, med repot monterat som volym. Servern behöver då bara Docker
 ```bash
 git clone https://github.com/MetaSolutionsAB/dataportal-dashboard.git /opt/dataportal-dashboard
 cd /opt/dataportal-dashboard
-cp config.docker.example.json config.json    # anpassa statusUrl m.m.
+cp config.example.json config.json           # anpassa statusUrl m.m.
 cp .env.example .env                         # ange EXPORTS_DIR = katalogen med exportfilerna
 ./docker-run.sh install                      # pnpm install i containern
 ./docker-run.sh generate                     # provkör, skriver public/status.json
@@ -53,7 +54,7 @@ containern, eftersom länkens mål inte finns där.
 
 Sökvägar i `config.json` är sökvägar **inuti containern**: relativa sökvägar
 utgår från `/app` (repots rot) och exportfilerna nås via monteringen
-`/data/exports`. `config.docker.example.json` är anpassad för det.
+`/data/exports`. `config.example.json` använder de sökvägarna.
 
 Extra flaggor skickas vidare till skriptet, t.ex.
 `./docker-run.sh generate --config annan.json --pretty`.

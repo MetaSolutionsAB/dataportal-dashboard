@@ -9,7 +9,7 @@
   },
   "harvest": {
     "maxAgeHours": 26,
-    "statusUrl": "harvester-status.json",
+    "statusUrl": "https://harvester.example.se/status.json",
     "statusMaxAgeMinutes": 90,
     "catalogs": [
       {
@@ -40,21 +40,21 @@
     "files": [
       {
         "name": "all.rdf",
-        "path": "examples/exports/all.rdf",
+        "path": "/data/exports/datasets/data.rdf",
         "url": "https://admin.dataportal.se/all.rdf",
-        "minSizeBytes": 1024
+        "minSizeBytes": 80000000
       },
       {
         "name": "nsip.rdf",
-        "path": "examples/exports/nsip.rdf",
+        "path": "/data/exports/nsip/nsip.rdf",
         "url": "https://admin.dataportal.se/nsip.rdf",
-        "minSizeBytes": 1024
+        "minSizeBytes": 800000
       },
       {
         "name": "hvd.rdf",
-        "path": "examples/exports/hvd.rdf",
+        "path": "/data/exports/hvd/hvd.rdf",
         "url": "https://admin.dataportal.se/hvd.rdf",
-        "minSizeBytes": 1024
+        "minSizeBytes": 3000000
       }
     ]
   },

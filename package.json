@@ -9,7 +9,6 @@
   },
   "scripts": {
     "generate": "node bin/generate.js",
-    "generate:example": "node bin/generate.js --config config.example.json",
     "serve": "node bin/serve.js"
   },
   "engines": {
