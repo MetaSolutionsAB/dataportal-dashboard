@@ -27,28 +27,36 @@ pnpm serve                           # http://localhost:8080/
 
 ## Installation på server
 
-Skriptet kräver **Node.js 20 eller nyare** (använder inbyggd `fetch` och
-`node:util.parseArgs`). Kontrollera med `node --version`; är versionen äldre
-måste Node uppdateras först, t.ex. via NodeSource eller nvm.
-
-pnpm följer inte med Node men kan aktiveras via Corepack, som gör det:
-
-```bash
-corepack enable
-corepack prepare pnpm@10.32.1 --activate
-```
-
-Saknas `corepack` fungerar `npm install -g pnpm@10` lika bra. Därefter:
+Skriptet kräver Node.js 20 eller nyare. Enklast är att låta Docker stå för
+Node: `docker-compose.yml` kör både installation och generator i
+standardimagen `node:22-alpine` från Docker Hub, med repot monterat som volym.
+Servern behöver då bara Docker.
 
 ```bash
 git clone https://github.com/MetaSolutionsAB/dataportal-dashboard.git /opt/dataportal-dashboard
 cd /opt/dataportal-dashboard
-pnpm install --prod
-cp config.example.json /etc/dataportal-dashboard/config.json   # och anpassa
+cp config.docker.example.json config.json    # anpassa statusUrl m.m.
+# ändra exportmonteringen (/srv/exports) i docker-compose.yml om filerna ligger någon annanstans
+docker compose run --rm install              # pnpm install i containern
+docker compose run --rm generate             # provkör, skriver public/status.json
 ```
 
-Cron-jobbet (se `crontab.example`) kör `node bin/generate.js` direkt och
-behöver alltså inte pnpm; pnpm används bara vid installation och uppdatering.
+Sökvägar i `config.json` är sökvägar **inuti containern**: relativa sökvägar
+utgår från `/app` (repots rot) och exportfilerna nås via monteringen
+`/data/exports`. `config.docker.example.json` är anpassad för det.
+
+Extra flaggor skickas vidare till skriptet, t.ex.
+`docker compose run --rm generate --config annan.json --pretty`.
+
+Vid uppdatering: `git pull` följt av `docker compose run --rm install`.
+
+`public/` serveras av valfri webbserver på värden, t.ex. nginx med
+`root /opt/dataportal-dashboard/public;`. Filerna som containern skriver ägs
+av root; lägg till `user: "1000:1000"` under `x-node` i `docker-compose.yml`
+om de i stället ska ägas av en viss användare.
+
+Utan Docker krävs Node 20+ och pnpm på servern (`corepack enable` eller
+`npm install -g pnpm@10`), därefter `pnpm install --prod`.
 
 ## Vad som samlas in
 
@@ -128,7 +136,7 @@ och `stopSignalRecieved: true` ger "Stoppad".
 Se `crontab.example`:
 
 ```
-15 * * * *  cd /opt/dataportal-dashboard && /usr/bin/node bin/generate.js --config /etc/dataportal-dashboard/config.json >> /var/log/dataportal-dashboard.log 2>&1
+15 * * * *  cd /opt/dataportal-dashboard && docker compose run --rm generate >> /var/log/dataportal-dashboard.log 2>&1
 ```
 
 Skriptet skriver alltid en `status.json` (atomiskt via temporär fil) även om

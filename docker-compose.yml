@@ -1,0 +1,29 @@
+# Kör installation och generator i standardimagen node:22-alpine från Docker Hub.
+# Repot monteras som /app, så node_modules och public/status.json hamnar på värden.
+#
+#   docker compose run --rm install     # pnpm install (efter kloning och vid uppdatering)
+#   docker compose run --rm generate    # skriver public/status.json, schemaläggs via cron
+#
+# config.json ligger i repots rot (gitignorerad). Sökvägar i den är sökvägar
+# inuti containern: relativa sökvägar utgår från /app, exportfilerna nås via
+# monteringen /data/exports nedan.
+x-node: &node
+  image: node:22-alpine
+  working_dir: /app
+  environment:
+    COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    CI: "true"   # låt pnpm köra utan interaktiva frågor
+  volumes:
+    - .:/app
+    # Exportfilerna som ska kontrolleras (anpassa vänstra sidan till servern)
+    - /srv/exports:/data/exports:ro
+
+services:
+  install:
+    <<: *node
+    command: sh -c "corepack enable && pnpm install --prod --frozen-lockfile"
+
+  generate:
+    <<: *node
+    entrypoint: ["node", "bin/generate.js"]
+    command: ["--config", "config.json"]   # egna flaggor: docker compose run --rm generate --config annan.json --pretty
