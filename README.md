@@ -144,37 +144,59 @@ och `stopSignalRecieved: true` ger "Stoppad".
 
 ## Lösenordsskydd
 
-Dashboarden har ingen egen inloggning; skyddet läggs i Apache med HTTP Basic
-Auth via en `.htaccess` i `public/`. Mallen finns i `public/.htaccess.example`.
+Dashboarden har ingen egen inloggning; skyddet läggs i Apache via en
+`.htaccess` i `public/`. Mallen `public/.htaccess.example` använder
+formulärinloggning med `mod_auth_form`: användaren möts av `public/login.html`
+i stället för webbläsarens Basic Auth-dialog, som ofta är avstängd via
+företagspolicy i Edge och Chrome. Lösenorden ligger i en vanlig `.htpasswd`.
 
-1. Skapa lösenordsfilen utanför webbroten. Första användaren med `-c`,
+1. Aktivera modulerna på servern (en gång, som root):
+
+   ```bash
+   sudo a2enmod auth_form session session_cookie session_crypto request
+   sudo systemctl restart apache2
+   ```
+
+2. Skapa lösenordsfilen utanför webbroten. Första användaren med `-c`,
    ytterligare användare utan (`htpasswd` finns i paketet `apache2-utils`):
 
    ```bash
    sudo htpasswd -c /etc/apache2/dataportal-dashboard.htpasswd anvandare
    ```
 
-2. Kopiera mallen och kontrollera sökvägen till lösenordsfilen:
+3. Kopiera mallen, kontrollera sökvägen till lösenordsfilen och byt
+   `SessionCryptoPassphrase` till en egen lång slumpad sträng, t.ex. från
+   `openssl rand -base64 48`:
 
    ```bash
    cp public/.htaccess.example public/.htaccess
    ```
 
-   `public/.htaccess` är gitignorerad eftersom sökvägen är serverspecifik.
+   `public/.htaccess` är gitignorerad eftersom den innehåller serverspecifik
+   sökväg och en hemlighet.
 
-3. Se till att den virtuella värden som serverar `public/` har
+4. Se till att den virtuella värden som serverar `public/` har
    `AllowOverride AuthConfig` (eller `All`) för katalogen. Utan det ignoreras
-   filen tyst och sidan förblir öppen. Kontrollera efteråt att sidan svarar
-   401 utan inloggning, t.ex. med `curl -I https://.../`.
+   filen tyst och sidan förblir öppen. Kontrollera efteråt att
+   `curl -I https://…/` svarar 302 till `/login.html`.
 
-Skyddet omfattar hela katalogen, alltså även `status.json`. Använd alltid
-TLS, annars skickas lösenordet i klartext vid varje anrop.
+Skyddet omfattar hela katalogen utom `login.html`, alltså även `status.json`.
+Sessionskakan har flaggan `Secure` och skickas bara över https, så utan TLS
+fungerar inloggningen inte. Sessionen gäller åtta timmar (`SessionMaxAge`).
+
+`login.html` har sin CSS inbäddad eftersom `style.css` ligger bakom skyddet.
+Formulärets fält måste heta `httpd_username` och `httpd_password` och postas
+till en skyddad adress; det är så `mod_auth_form` tar emot inloggningen.
+
+Räcker webbläsarens egen Basic Auth-dialog kan `.htaccess` i stället bestå av
+`AuthType Basic`, `AuthName`, `AuthUserFile` och `Require valid-user`, utan
+modulerna i steg 1.
 
 Harvesterns `status.json` hämtas av webbläsaren från `harvest.statusUrl`. Ligger
-den bakom samma skydd och på samma origin följer inloggningen med automatiskt.
-Ligger den på en annan origin skickar webbläsaren inte inloggningen dit, och
-den servern måste då antingen vara öppen för läsning eller svara med
-`Access-Control-Allow-Origin` för dashboardens origin.
+den på samma origin följer sessionskakan med automatiskt. Ligger den på en annan
+origin skickas ingen inloggning dit, och den servern måste då antingen vara
+öppen för läsning eller svara med `Access-Control-Allow-Origin` för
+dashboardens origin.
 
 ## Crontab
 

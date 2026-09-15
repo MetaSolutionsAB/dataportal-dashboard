@@ -1,11 +1,31 @@
-# Lösenordsskydd för dashboarden med HTTP Basic Auth.
-# Kopiera till public/.htaccess (gitignorerad) och peka AuthUserFile på
-# lösenordsfilen, som skapas utanför webbroten:
+# Lösenordsskydd för dashboarden med formulärinloggning (mod_auth_form).
+# Webbläsaren visar en vanlig inloggningssida (login.html) i stället för sin
+# egen Basic Auth-dialog, som kan vara avstängd via företagspolicy i Edge/Chrome.
+#
+# Kopiera till public/.htaccess (gitignorerad), peka AuthUserFile på
+# lösenordsfilen och byt SessionCryptoPassphrase till en egen lång slumpad sträng.
+# Lösenordsfilen skapas utanför webbroten:
 #   sudo htpasswd -c /etc/apache2/dataportal-dashboard.htpasswd anvandare
 #
-# Kräver att den virtuella värden har "AllowOverride AuthConfig" (eller All)
-# för katalogen, annars ignoreras filen tyst och sidan förblir öppen.
-AuthType Basic
+# Kräver på servern (en gång, som root):
+#   sudo a2enmod auth_form session session_cookie session_crypto request
+#   sudo systemctl restart apache2
+# samt att den virtuella värden har "AllowOverride AuthConfig" (eller All) för
+# katalogen, annars ignoreras filen tyst och sidan förblir öppen.
+#
+# Kakan har flaggan Secure och skickas därför bara över https.
+AuthType form
 AuthName "Dataportal driftstatus"
+AuthFormProvider file
 AuthUserFile /etc/apache2/dataportal-dashboard.htpasswd
+AuthFormLoginRequiredLocation /login.html
+Session On
+SessionCookieName dashboard_session path=/;HttpOnly;Secure;SameSite=Lax
+SessionCryptoPassphrase byt-till-en-lang-slumpad-strang
+SessionMaxAge 28800
 Require valid-user
+
+# Inloggningssidan måste gå att nå utan inloggning
+<Files "login.html">
+    Require all granted
+</Files>

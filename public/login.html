@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logga in – Sveriges dataportal driftstatus</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Ccircle cx=%278%27 cy=%278%27 r=%277%27 fill=%27%232a78d6%27/%3E%3C/svg%3E">
+  <!-- CSS inbäddad: style.css ligger bakom inloggningen och kan inte läsas härifrån. -->
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+      --hairline: #e1e0d9; --border: rgba(11, 11, 11, 0.10); --accent: #2a78d6; --accent-ink: #ffffff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+        --hairline: #2c2c2a; --border: rgba(255, 255, 255, 0.10); --accent: #3987e5;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background: var(--page); color: var(--ink);
+      font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+      display: grid; place-items: center; min-height: 100vh; padding: 24px;
+    }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 28px 28px 24px; width: 100%; max-width: 380px;
+    }
+    h1 { font-size: 1.25rem; margin: 0 0 4px; font-weight: 650; letter-spacing: -0.01em; }
+    .subtitle { margin: 0 0 20px; color: var(--ink-2); }
+    label { display: block; font-size: 0.9rem; color: var(--ink-2); margin-bottom: 4px; }
+    input {
+      width: 100%; font: inherit; color: var(--ink); background: var(--page);
+      border: 1px solid var(--border); border-radius: 6px; padding: 9px 10px; margin-bottom: 14px;
+    }
+    input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+    button {
+      width: 100%; font: inherit; font-weight: 600; color: var(--accent-ink); background: var(--accent);
+      border: 0; border-radius: 6px; padding: 10px; cursor: pointer; margin-top: 4px;
+    }
+    button:hover { filter: brightness(1.08); }
+    .hint { margin: 16px 0 0; font-size: 0.85rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Sveriges dataportal – driftstatus</h1>
+    <p class="subtitle">Logga in för att se dashboarden.</p>
+    <!-- Fältnamnen httpd_username/httpd_password och POST till en skyddad sida är vad mod_auth_form förväntar sig. -->
+    <form method="post" action="/">
+      <label for="user">Användarnamn</label>
+      <input id="user" name="httpd_username" type="text" autocomplete="username" required autofocus>
+      <label for="pass">Lösenord</label>
+      <input id="pass" name="httpd_password" type="password" autocomplete="current-password" required>
+      <button type="submit">Logga in</button>
+    </form>
+    <p class="hint">Kommer du tillbaka hit efter att ha loggat in stämde inte användarnamn eller lösenord.</p>
+  </main>
+</body>
+</html>
