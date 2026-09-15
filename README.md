@@ -184,6 +184,15 @@ Skyddet omfattar hela katalogen utom `login.html`, alltså även `status.json`.
 Sessionskakan har flaggan `Secure` och skickas bara över https, så utan TLS
 fungerar inloggningen inte. Sessionen gäller åtta timmar (`SessionMaxAge`).
 
+Ligger dashboarden under en undersökväg, t.ex. `/dashboard/`, ska
+`AuthFormLoginRequiredLocation` vara `/dashboard/login.html` och kakans `path`
+vara `/dashboard`. Ändras kakans `path` eller lösenfrasen i efterhand bör kakan
+samtidigt få ett nytt namn i `SessionCookieName`, annars har webbläsare som
+redan besökt sidan två kakor med samma namn. Apache avvisar då båda, med
+symtomet att sidan laddas efter inloggning men `style.css`, `app.js` och
+`status.json` omdirigeras till `login.html`. Att rensa webbplatsens kakor i
+webbläsaren löser det för den drabbade användaren.
+
 `login.html` har sin CSS inbäddad eftersom `style.css` ligger bakom skyddet.
 Formulärets fält måste heta `httpd_username` och `httpd_password` och postas
 till en skyddad adress; det är så `mod_auth_form` tar emot inloggningen.

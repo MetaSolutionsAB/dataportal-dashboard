@@ -17,6 +17,13 @@
 # AuthFormLoginRequiredLocation vara /dashboard/login.html och kakans path
 # /dashboard (utan avslutande snedstreck, så att även /dashboard utan slash täcks).
 #
+# Byt namn på kakan (SessionCookieName) om du ändrar dess path i efterhand.
+# Annars får webbläsare som redan besökt sidan två kakor med samma namn, och då
+# avvisar Apache båda ("client submitted cookie more than once"): sidan laddas
+# efter inloggning men style.css, app.js och status.json omdirigeras till
+# login.html. Samma sak händer om lösenfrasen byts medan gamla kakor lever kvar,
+# tills de gått ut efter SessionMaxAge.
+#
 # Kakan har flaggan Secure och skickas därför bara över https.
 AuthType form
 AuthName "Dataportal driftstatus"
