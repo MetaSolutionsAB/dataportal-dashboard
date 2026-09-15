@@ -50,8 +50,9 @@
   <main class="card">
     <h1>Sveriges dataportal – driftstatus</h1>
     <p class="subtitle">Logga in för att se dashboarden.</p>
-    <!-- Fältnamnen httpd_username/httpd_password och POST till en skyddad sida är vad mod_auth_form förväntar sig. -->
-    <form method="post" action="/">
+    <!-- Fältnamnen httpd_username/httpd_password är vad mod_auth_form förväntar sig. Formuläret postar till katalogen
+         sidan ligger i (skyddad av .htaccess), så det fungerar oavsett om dashboarden ligger på / eller t.ex. /dashboard/. -->
+    <form method="post" action="./">
       <label for="user">Användarnamn</label>
       <input id="user" name="httpd_username" type="text" autocomplete="username" required autofocus>
       <label for="pass">Lösenord</label>

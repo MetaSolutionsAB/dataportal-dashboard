@@ -13,6 +13,10 @@
 # samt att den virtuella värden har "AllowOverride AuthConfig" (eller All) för
 # katalogen, annars ignoreras filen tyst och sidan förblir öppen.
 #
+# Ligger dashboarden under en undersökväg, t.ex. https://server/dashboard/, ska
+# AuthFormLoginRequiredLocation vara /dashboard/login.html och kakans path
+# /dashboard (utan avslutande snedstreck, så att även /dashboard utan slash täcks).
+#
 # Kakan har flaggan Secure och skickas därför bara över https.
 AuthType form
 AuthName "Dataportal driftstatus"
